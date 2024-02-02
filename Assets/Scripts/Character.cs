@@ -5,10 +5,28 @@ using UnityEngine;
 
 public class Character : MonoBehaviour
 {
+    [Header("Need to assign")]
+    [SerializeField]
+    private OverlapCircle targetDetect;
+
     protected Stat stat;
 
-    [SerializeField]
-    private OverlapCircle detect;
+    private List<Character> attackTargets;
+    private Character attackedTarget;
+
+    public int ID
+    {
+        set { }
+        get
+        {
+            if (ID == 0)
+            {
+                ID = gameObject.GetInstanceID();
+            }
+
+            return ID;
+        }
+    }
 
     private void Awake()
     {
@@ -18,16 +36,27 @@ public class Character : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        
+    }
+
     private void Start()
     {
         Managers.Instance.Stat.Load(stat, "test");
         stat.PrintStatLog();
 
-        detect.OnDetectTarget += OnDetectTarget;
+        targetDetect.OnDetectTarget += OnDetectTarget;
+        targetDetect.StartFindTarget();
     }
 
-    private void OnDetectTarget(object sender, EventArgs eventArgs)
+    private void OnDetectTarget(
+        object sender, OnDetectTargetEventArgs eventArgs)
     {
-        Debug.Log("타겟 탐지");
+        if (attackTargets.Find(target => 
+            target.ID == eventArgs.TargetID) != null)
+        {
+            attackTargets.Add(eventArgs.Character);
+        }   
     }
 }
