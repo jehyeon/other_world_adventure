@@ -10,6 +10,7 @@ public class Stat : MonoBehaviour
     private int maxDamage;
     private int healPower;
     private float attackSpeed;
+    private float attackRange;
 
     // 방어
     private int hp;
@@ -34,6 +35,7 @@ public class Stat : MonoBehaviour
         maxDamage = data.MaxDamage;
         healPower = data.HealPower;
         attackSpeed = data.AttackSpeed;
+        attackRange = data.attackRange;
         //hp = data.Hp;
         maxHp = data.MaxHp;
         damageReduction = data.DamageReduction;
@@ -54,10 +56,11 @@ public class Stat : MonoBehaviour
             "maxDamage: {3}\n" +
             "healPower: {4}\n" +
             "attackSpeed: {5}\n" +
-            "maxHp: {6}\n" +
-            "damageReduction: {7}\n" +
-            "moveSpeed: {8}\n",
+            "attackRange: {6}\n" +
+            "maxHp: {7}\n" +
+            "damageReduction: {8}\n" +
+            "moveSpeed: {9}\n",
             name, damage, minDamage, maxDamage, healPower,
-            attackSpeed, maxHp, damageReduction, moveSpeed));
+            attackSpeed, attackRange, maxHp, damageReduction, moveSpeed));
     }    
 }

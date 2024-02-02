@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67cf89a710950ba4c8d09cf9df2d93f0, type: 3}
+  m_Name: test
+  m_EditorClassIdentifier: 
+  Damage: 10
+  MinDamage: 1
+  MaxDamage: 5
+  HealPower: 0
+  AttackSpeed: 1
+  attackRange: 2
+  Hp: 0
+  MaxHp: 100
+  DamageReduction: 2
+  MoveSpeed: 1
+  SkillProgress: 0

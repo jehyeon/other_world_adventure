@@ -11,6 +11,7 @@ public class StatData : ScriptableObject
     public int MaxDamage;
     public int HealPower;
     public float AttackSpeed;
+    public float attackRange;
 
     // 방어
     public int Hp;
