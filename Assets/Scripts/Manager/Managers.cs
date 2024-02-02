@@ -36,6 +36,12 @@ public class Managers : MonoBehaviour
         }
     }
 
+    // Stat Manager
+    [Header ("Managers (Need to assign)")]
+    [SerializeField]
+    private StatManager stat;
+    public StatManager Stat { get { return stat; } }
+
     private void Awake()
     {
         Init();
