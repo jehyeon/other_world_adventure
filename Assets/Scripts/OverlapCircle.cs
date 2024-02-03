@@ -6,7 +6,7 @@ using UnityEngine;
 public class OnDetectTargetEventArgs : EventArgs
 {
     public int TargetID;
-    public Character Character;
+    public Character Target;
 }
 
 public class OverlapCircle : MonoBehaviour
@@ -61,7 +61,7 @@ public class OverlapCircle : MonoBehaviour
             {
                 int id = targetCols[i].GetInstanceID();
                 OnDetectTarget?.Invoke(this, new OnDetectTargetEventArgs { 
-                    TargetID = id, Character = targetCols[i].GetComponent<Character>()});
+                    TargetID = id, Target = targetCols[i].GetComponent<Character>()});
             }
         }
     }
