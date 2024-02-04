@@ -17,12 +17,5 @@ public class Friendly : Character
     protected override void Update()
     {
         base.Update();
-
-        // temp
-        float h = Input.GetAxisRaw("Horizontal");
-        float v = Input.GetAxisRaw("Vertical");
-        Vector2 dir = new Vector2(h, v);
-        dir = dir.normalized;
-        transform.position += (Vector3)dir * Time.deltaTime * stat.MoveSpeed;
     }
 }

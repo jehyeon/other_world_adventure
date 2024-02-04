@@ -33,6 +33,11 @@ public class Character : MonoBehaviour
     // Context
     private CharacterContext characterContext = new CharacterContext();
     public CharacterContext Context { get { return characterContext; } }
+
+    // Move
+    private Vector3 dest;
+    public Vector3 Dest { get { return dest; } }
+
     // Combat
     private bool bCanAttack = true;
     public bool IsCanAttack { get { return bCanAttack; } }
@@ -43,6 +48,8 @@ public class Character : MonoBehaviour
         {
             stat = gameObject.AddComponent<Stat>();
         }
+
+        SetDest(transform.position);
     }
 
     protected virtual void Start()
@@ -74,6 +81,9 @@ public class Character : MonoBehaviour
         stateMachine.OperateUpdate(characterContext);
     }
 
+    // ////////////////////////////////////////////////// //
+    // Detect                                             //
+    // ////////////////////////////////////////////////// //
     private void OnDetectTarget(
         object sender, OnDetectTargetEventArgs eventArgs)
     {
@@ -82,7 +92,31 @@ public class Character : MonoBehaviour
         characterContext.TryAddAttackTarget(eventArgs.TargetID, eventArgs.Target);
     }
 
-    // Combat
+    // ////////////////////////////////////////////////// //
+    // Move                                               //
+    // ////////////////////////////////////////////////// //
+    // set
+    public void SetDest(Vector3 characterDest)
+    {
+        dest = characterDest;
+    }
+
+    /// <summary>
+    /// 목적지까지 이동, Update()에서 사용
+    /// </summary>
+    public void MoveUpdate()
+    {
+        Vector3 dir = dest - transform.position;
+
+        if (dir.sqrMagnitude > Managers.Instance.DiffFromDest)
+        {
+            transform.position += dir.normalized * Time.deltaTime * Stat.MoveSpeed;
+        }
+    }
+
+    // ////////////////////////////////////////////////// //
+    // Combat                                             //
+    // ////////////////////////////////////////////////// //
     public void Attack(Character target)
     {
         int damage = stat.CalculAttackDamage();

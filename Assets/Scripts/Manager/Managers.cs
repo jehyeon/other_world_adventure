@@ -37,10 +37,16 @@ public class Managers : MonoBehaviour
     }
 
     // Stat Manager
-    [Header ("Managers (Need to assign)")]
+    [Header("Managers (Need to assign)")]
     [SerializeField]
     private StatManager stat;
     public StatManager Stat { get { return stat; } }
+
+    // Game Setting
+    [Header("Settings")]
+    [SerializeField]
+    private float diffFromDest = 0.01f;
+    public float DiffFromDest { get { return diffFromDest; } }
 
     private void Awake()
     {

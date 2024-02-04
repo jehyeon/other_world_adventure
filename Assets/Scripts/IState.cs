@@ -38,8 +38,7 @@ public class StateIdle : IState
 
     public void OperateUpdate(CharacterContext context)
     {
-        // TODO: Idle update
-        //Debug.Log(character.transform.position);
+        context.Character.MoveUpdate();
     }
 }
 
