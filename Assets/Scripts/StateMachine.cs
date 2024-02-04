@@ -4,11 +4,13 @@ using UnityEngine;
 
 public class StateMachine
 {
-    // Stat
-    protected Stat currentStat;
-
     // State
     public IState currentState;
+
+    public StateMachine()
+    {
+        currentState = null;
+    }
 
     public StateMachine(IState defaultState)
     {
@@ -29,8 +31,8 @@ public class StateMachine
         currentState.OperateEnter(context);
     }
 
-    public void OperateUpdate()
+    public void OperateUpdate(CharacterContext context)
     {
-        currentState.OperateUpdate();
+        currentState.OperateUpdate(context);
     }
 }

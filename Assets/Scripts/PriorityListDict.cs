@@ -23,6 +23,7 @@ public class PriorityListDict<T1, T2>
     {
         Clear();
     }
+
     public void Clear()
     {
         list = new List<T1>();
@@ -42,9 +43,8 @@ public class PriorityListDict<T1, T2>
     // Get
     public bool TryGetFront(out T2 value)
     {
-        
         Priority p;
-        if (!dict.TryGetValue(list[0], out p))
+        if (list.Count == 0 || !dict.TryGetValue(list[0], out p))
         {
             value = default(T2);
 
@@ -54,6 +54,23 @@ public class PriorityListDict<T1, T2>
         value = p.Value;
 
         return true;
+    }
+
+    public List<T1> GetList()
+    {
+        return list;
+    }
+
+    public List<T2> GetValueList()
+    {
+        List<T2> ret = new List<T2>();
+
+        foreach (T1 key in list)
+        {
+            ret.Add(dict[key].Value);
+        }
+
+        return ret;
     }
 
     // Set

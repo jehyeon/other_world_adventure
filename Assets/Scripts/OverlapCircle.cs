@@ -16,6 +16,7 @@ public class OverlapCircle : MonoBehaviour
     private bool DebugMode = false;
     [SerializeField]
     private Color gizmosColor = Color.red;
+    private OverlapCircleForDebug debug;
 
     public event EventHandler<OnDetectTargetEventArgs> OnDetectTarget;
 
@@ -31,9 +32,7 @@ public class OverlapCircle : MonoBehaviour
     {
         if (DebugMode)
         {
-            OverlapCircleForDebug debug = 
-                gameObject.AddComponent<OverlapCircleForDebug>();
-
+            debug = gameObject.AddComponent<OverlapCircleForDebug>();
             debug.Set(gizmosColor, detectRange);
         }
     }
@@ -55,19 +54,23 @@ public class OverlapCircle : MonoBehaviour
             yield return new WaitForSeconds(0.25f);
 
             targetCols = Physics2D.OverlapCircleAll(transform.position, detectRange, targetLayer);
-            
+
+            Character c;
             // need to optimization
             for (int i = 0; i < targetCols.Length; i++)
             {
-                int id = targetCols[i].GetInstanceID();
-                OnDetectTarget?.Invoke(this, new OnDetectTargetEventArgs { 
-                    TargetID = id, Target = targetCols[i].GetComponent<Character>()});
+                c = targetCols[i].GetComponent<Character>();
+                if (c != null && !c.IsDead)
+                {
+                    int id = c.GetInstanceID();
+                    OnDetectTarget?.Invoke(this, new OnDetectTargetEventArgs
+                    {
+                        TargetID = id,
+                        Target = targetCols[i].GetComponent<Character>()
+                    });
+                }
             }
         }
-    }
-
-    private void Update()
-    {
     }
 
     // set
@@ -75,5 +78,10 @@ public class OverlapCircle : MonoBehaviour
     {
         detectRange = range;
         targetLayer = layer;
+    }
+
+    public void OnDestroy()
+    {
+        Destroy(debug);
     }
 }

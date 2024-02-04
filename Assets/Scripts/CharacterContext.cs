@@ -5,9 +5,9 @@ using UnityEngine;
 // State 변화 시에도 유지되는 CharacterContext
 public class CharacterContext
 {
-    // Stat
-    protected Stat currentStat;
-    public Stat CurrentStat { get { return currentStat; } }
+    protected Character character;
+    // Get
+    public Character Character { get { return character; } }
 
     // Target
     private PriorityListDict<int, Character> attackTargets;
@@ -16,14 +16,14 @@ public class CharacterContext
     public CharacterContext()
     {
         attackTargets = new PriorityListDict<int, Character>();
-        attackTargets = new PriorityListDict<int, Character>();
+        attackedTargets = new PriorityListDict<int, Character>();
     }
 
     // Set
-    // Stat
-    public void SetStat(Stat stat)
+    // Character
+    public void SetCharacter(Character c)
     {
-        currentStat = stat;
+        character = c;
     }
 
     // Target
@@ -33,8 +33,35 @@ public class CharacterContext
         attackedTargets.Clear();
     }
 
+    // Attack Targets
     public void TryAddAttackTarget(int id, Character character)
     {
         attackTargets.TryAdd(id, character);
+    }
+
+    public bool TryGetNextTarget(out Character target)
+    {
+        if (attackTargets.TryGetFront(out target))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    public void RemoveAttackTarget(int id)
+    {
+        attackTargets.Remove(id);
+    }
+
+    // Attacked Targets
+    public List<Character> GetAttackedTargets()
+    {
+        return attackedTargets.GetValueList();
+    }
+
+    public void TryAddAttackedTarget(int id, Character character)
+    {
+        attackedTargets.TryAdd(id, character);
     }
 }

@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 67cf89a710950ba4c8d09cf9df2d93f0, type: 3}
-  m_Name: test
+  m_Name: enemyTest
   m_EditorClassIdentifier: 
-  Damage: 10
+  Damage: 0
   MinDamage: 1
-  MaxDamage: 5
+  MaxDamage: 2
   HealPower: 0
   AttackSpeed: 1
   attackRange: 2
