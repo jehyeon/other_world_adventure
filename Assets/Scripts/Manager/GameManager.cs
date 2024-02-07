@@ -21,16 +21,8 @@ public class GameManager : MonoBehaviour
         Init();
     }
 
-    void Start()
+    private void Start()
     {
-        Debug.Log("TEST");
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        // TEST
-        // 임시 씬이동 키 입력
     }
 
     public static void Init()
@@ -48,10 +40,5 @@ public class GameManager : MonoBehaviour
             DontDestroyOnLoad(go);
             instance = go.GetComponent<GameManager>();
         }
-    }
-
-    public void Test()
-    {
-        Debug.Log("TEST!!!");
     }
 }
