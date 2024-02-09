@@ -56,6 +56,21 @@ public class PriorityListDict<T1, T2>
         return true;
     }
 
+    public bool TryGetValue(T1 key, out T2 value)
+    {
+        Priority p;
+        if (list.Count == 0 || !dict.TryGetValue(key, out p))
+        {
+            value = default(T2);
+
+            return false;
+        }
+
+        value = p.Value;
+
+        return true;
+    }
+
     public List<T1> GetList()
     {
         return list;
