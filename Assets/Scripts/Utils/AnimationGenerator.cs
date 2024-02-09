@@ -62,6 +62,6 @@ public class AnimationGenerator : MonoBehaviour
 
     public void AddSprite(Object obj)
     {
-        Sprites.Add((Sprite)obj);
+        Sprites.Add(obj as Sprite);
     }
 }
