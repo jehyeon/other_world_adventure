@@ -40,6 +40,10 @@ public class Managers : MonoBehaviour
     private float diffFromDest = 0.01f;
     public float DiffFromDest { get { return diffFromDest; } }
 
+    [SerializeField]
+    private float diffForRenderFlip = 0.01f;
+    public float DiffForRenderFlip { get { return diffForRenderFlip; } }
+
     private void Awake()
     {
         Init();

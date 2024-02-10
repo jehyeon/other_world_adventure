@@ -9,43 +9,73 @@ public interface IState
     public void OperateUpdate(CharacterContext context);
 }
 
+/// <summary>
+/// Default, state 변화 시 Enter, Exit 동작을 위한 초기화 용도
+/// </summary>
 public class StateStart : IState
 {
-    void IState.OperateEnter(CharacterContext context)
-    {
-    }
-
-    void IState.OperateExit(CharacterContext context)
-    {
-    }
-
-    void IState.OperateUpdate(CharacterContext context)
-    {
-    }
+    void IState.OperateEnter(CharacterContext context) { }
+    void IState.OperateExit(CharacterContext context) { }
+    void IState.OperateUpdate(CharacterContext context) { }
 }
 
 public class StateIdle : IState
 {
+    private Character character;
+    private Vector3 dir;
+
     public void OperateEnter(CharacterContext context)
     {
+        character = context.Character;
         // Idle 상태 진입 시, 타겟 정보 초기화
         context.ClearTargetsInfo();
     }
 
     public void OperateExit(CharacterContext context)
     {
+        MoveToDestination();
     }
 
     public void OperateUpdate(CharacterContext context)
     {
-        context.Character.MoveUpdate();
+        //context.Character.Move();
+        MoveToDestination();
+    }
+
+    /// <summary>
+    /// 목적지까지 이동, 방향에 따라 렌더러 반전
+    /// </summary>
+    private void MoveToDestination()
+    {
+        dir = character.Destination - character.transform.position;
+
+        // 방향에 따라 좌우반전
+        character.SpriteRenderer.flipX = dir.x > Managers.Instance.DiffForRenderFlip
+            ? false
+            : true;
+
+        if (dir.sqrMagnitude > Managers.Instance.DiffFromDest)
+        {
+            character.transform.position += dir.normalized * Time.deltaTime * character.Stat.MoveSpeed;
+            character.Animator.SetBool("isMoved", true);
+        }
+        else
+        {
+            character.Animator.SetBool("isMoved", false);
+        }
     }
 }
 
+/// <summary>
+/// 전투 state
+/// </summary>
 public class StateCombat : IState
 {
+    private Character character;
+
     public void OperateEnter(CharacterContext context)
     {
+        character = context.Character;
     }
 
     public void OperateExit(CharacterContext context)
@@ -68,16 +98,17 @@ public class StateCombat : IState
             return;
         }
 
-        Vector3 dir = currentTarget.transform.position - context.Character.transform.position;
-
         // 공격 사거리 밖 타겟이 있을 경우
-        if (dir.sqrMagnitude > context.Character.Stat.AttackRange)
-        {
-            // 공격 사거리까지 이동
-            context.Character.transform.position +=
-                dir.normalized * Time.deltaTime * context.Character.Stat.MoveSpeed;
-        }
-        else
+        //if (context.Character.MoveToTargetForAttack(currentTarget.transform.position))
+        //{
+        //    if (context.Character.IsCanAttack)
+        //    {
+        //        // 공격
+        //        // TODO: 직업에 따라 공격 스타일 분기를 어떻게 해야할 지 고민 필요
+        //        context.Character.Attack(currentTarget);
+        //    }
+        //}
+        if (MoveToTargetForAttack(currentTarget.transform.position))
         {
             if (context.Character.IsCanAttack)
             {
@@ -86,6 +117,32 @@ public class StateCombat : IState
                 context.Character.Attack(currentTarget);
             }
         }
+    }
+
+    private bool MoveToTargetForAttack(Vector3 targetPos)
+    {
+        Vector3 dir = targetPos - character.transform.position;
+
+        // 공격 사거리 안인 경우
+        if (dir.sqrMagnitude < character.Stat.AttackRange)
+        {
+            // 타겟 방향으로 더 이동하지 않음
+            character.Animator.SetBool("isMoved", false);
+            character.SetDest(character.transform.position);
+
+            return true;
+        }
+
+        // 방향에 따라 좌우반전
+        character.SpriteRenderer.flipX = dir.x > Managers.Instance.DiffForRenderFlip
+            ? false
+            : true;
+
+        // 이동
+        character.transform.position += dir.normalized * Time.deltaTime * character.Stat.MoveSpeed;
+        character.Animator.SetBool("isMoved", true);
+
+        return false;
     }
 }
 

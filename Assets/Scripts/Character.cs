@@ -3,6 +3,19 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 
+public enum Camp
+{
+    Human
+}
+
+public enum Job
+{
+    SwordMan,
+    Archer,
+    Wizard,
+    Healer
+}
+
 public enum CharacterState
 {
     Idle,
@@ -10,12 +23,9 @@ public enum CharacterState
     Dead
 }
 
+[RequireComponent(typeof(Stat), typeof(SpriteRenderer), typeof(Animator))]
 public class Character : MonoBehaviour
 {
-    [Header("Need to assign")]
-    [SerializeField]
-    private OverlapCircle detectTarget;
-
     // Stat
     protected Stat stat;
     public Stat Stat { get { return stat; } }
@@ -24,6 +34,17 @@ public class Character : MonoBehaviour
     private StateMachine stateMachine;
     private Dictionary<CharacterState, IState> dicState =
         new Dictionary<CharacterState, IState>();
+
+    // Renderer & Animator
+    protected SpriteRenderer spriteRenderer;
+    public SpriteRenderer SpriteRenderer { get { return spriteRenderer; } }
+    protected Animator animator;
+    public Animator Animator { get { return animator; } }
+
+    // Detect
+    [Header("Require")]
+    [SerializeField]
+    private OverlapCircle detectTarget;
 
     [Header("For check")]
     [SerializeField]
@@ -35,19 +56,20 @@ public class Character : MonoBehaviour
     public CharacterContext Context { get { return characterContext; } }
 
     // Move
-    private Vector3 dest;
-    public Vector3 Dest { get { return dest; } }
+    private Vector3 destination;
+    public Vector3 Destination { get { return destination; } }
 
     // Combat
     private bool bCanAttack = true;
     public bool IsCanAttack { get { return bCanAttack; } }
 
-    private void Awake()
+    protected void Awake()
     {
-        if (stat == null)
-        {
-            stat = gameObject.AddComponent<Stat>();
-        }
+        stat = GetComponent<Stat>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        animator = GetComponent<Animator>();
+
+        detectTarget = GetComponent<OverlapCircle>();
 
         SetDest(transform.position);
     }
@@ -81,37 +103,13 @@ public class Character : MonoBehaviour
         stateMachine.OperateUpdate(characterContext);
     }
 
-    // ////////////////////////////////////////////////// //
-    // Detect                                             //
-    // ////////////////////////////////////////////////// //
-    private void OnDetectTarget(
-        object sender, OnDetectTargetEventArgs eventArgs)
-    {
-        stateMachine.SetState(dicState[CharacterState.Combat], characterContext);
-        // OverlapCircle detectTarget에서 탐지할 때마다 add 시도
-        characterContext.TryAddAttackTarget(eventArgs.TargetID, eventArgs.Target);
-    }
-
-    // ////////////////////////////////////////////////// //
-    // Move                                               //
-    // ////////////////////////////////////////////////// //
-    // set
+    /// <summary>
+    /// 목적지 지정, 파티 포메이션 이동을 위해 사용
+    /// </summary>
+    /// <param name="characterDest"></param>
     public void SetDest(Vector3 characterDest)
     {
-        dest = characterDest;
-    }
-
-    /// <summary>
-    /// 목적지까지 이동, Update()에서 사용
-    /// </summary>
-    public void MoveUpdate()
-    {
-        Vector3 dir = dest - transform.position;
-
-        if (dir.sqrMagnitude > Managers.Instance.DiffFromDest)
-        {
-            transform.position += dir.normalized * Time.deltaTime * Stat.MoveSpeed;
-        }
+        destination = characterDest;
     }
 
     // ////////////////////////////////////////////////// //
@@ -121,6 +119,7 @@ public class Character : MonoBehaviour
     {
         int damage = stat.CalculAttackDamage();
         target.Attacked(damage, this);
+        animator.SetTrigger("Attack");
 
         StartCoroutine("WaitForAttackSpeed", stat.AttackSpeed);
     }
@@ -166,5 +165,16 @@ public class Character : MonoBehaviour
         bCanAttack = false;
         yield return new WaitForSeconds(attackSpeed);
         bCanAttack = true;
+    }
+
+    // ////////////////////////////////////////////////// //
+    // Detect                                             //
+    // ////////////////////////////////////////////////// //
+    private void OnDetectTarget(
+        object sender, OnDetectTargetEventArgs eventArgs)
+    {
+        stateMachine.SetState(dicState[CharacterState.Combat], characterContext);
+        // OverlapCircle detectTarget에서 탐지할 때마다 add 시도
+        characterContext.TryAddAttackTarget(eventArgs.TargetID, eventArgs.Target);
     }
 }

@@ -9,6 +9,6 @@ public class Enemy : Character
         base.Start();
 
         // temp 임시 스탯 로드
-        Managers.Instance.Stat.Load(stat, "enemyTest");
+        Managers.Instance.DataManager.LoadStatAtTarget(stat, "enemyTest");
     }
 }

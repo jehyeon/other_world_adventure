@@ -11,4 +11,16 @@ public class DataManager : MonoBehaviour
 
         targetStat.Load(statData);
     }
+
+    public AnimatorOverrideController LoadAnimator(Camp camp, Job job, int jobType)
+    {
+
+        AnimatorOverrideController controller = Resources.Load<AnimatorOverrideController>(
+            string.Format("Animations/{0}/{1}/{2}/animator", 
+                camp.ToString(), 
+                job.ToString(), 
+                jobType));
+
+        return controller;
+    }
 }
