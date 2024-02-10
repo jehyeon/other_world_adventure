@@ -158,7 +158,7 @@ public class AnimationGeneratorEditor : EditorWindow
 
         if (splited.Length > 1)
         {
-            return int.Parse(splited[1]);
+            return int.Parse(splited[splited.Length - 1]);
         }
 
         // sheet data인 경우 (ex. not 1_16, just 1, 2)
