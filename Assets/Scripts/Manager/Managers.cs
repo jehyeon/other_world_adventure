@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(UIManager), typeof(DataManager))]
 public class Managers : MonoBehaviour
 {
     // Managers
@@ -26,21 +27,12 @@ public class Managers : MonoBehaviour
     }
 
     // UI Manager
-    private static UIManager ui;
-    public static UIManager UI
-    {
-        get
-        {
-            InitUIManager();
-            return ui;
-        }
-    }
+    private UIManager uiManager;
+    public UIManager UIManager { get { return uiManager; } }
 
-    // Stat Manager
-    [Header("Managers (Need to assign)")]
-    [SerializeField]
-    private StatManager stat;
-    public StatManager Stat { get { return stat; } }
+    // Data Manager
+    private DataManager dataManager;
+    public DataManager DataManager { get { return dataManager; } }
 
     // Game Setting
     [Header("Settings")]
@@ -51,15 +43,11 @@ public class Managers : MonoBehaviour
     private void Awake()
     {
         Init();
+
+        uiManager = GetComponent<UIManager>();
+        dataManager = GetComponent<DataManager>();
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
     void Update()
     {
         // InputManager
@@ -80,39 +68,6 @@ public class Managers : MonoBehaviour
 
             DontDestroyOnLoad(go);
             instance = go.GetComponent<Managers>();
-        }
-    }
-
-    public void Test()
-    {
-
-    }
-
-    // UI Manager
-    public static void InitUIManager()
-    {
-        if (ui == null)
-        {
-            Init();
-            // 무조건 찾음
-            GameObject goManagers = GameObject.Find("Managers");
-
-            Transform trUIManager = goManagers.transform.Find("UIManager");
-            GameObject goUIManager;
-
-            if (trUIManager == null)
-            {
-                goUIManager = new GameObject { name = "UIManager" };
-                goUIManager.AddComponent<UIManager>();
-
-                goUIManager.transform.SetParent(goManagers.transform);
-            }
-            else
-            {
-                goUIManager = trUIManager.gameObject;
-            }
-
-            ui = goUIManager.GetComponent<UIManager>();
         }
     }
 }
