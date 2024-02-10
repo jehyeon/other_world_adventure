@@ -32,7 +32,7 @@ public class AnimationGenerator : MonoBehaviour
         }
     }
 
-    public AnimationClip Generate()
+    public AnimationClip Generate(bool isLoop = false)
     {
         AnimationClip animClip = new AnimationClip();
         animClip.frameRate = FPS;
@@ -48,6 +48,14 @@ public class AnimationGenerator : MonoBehaviour
             spriteKeyFrames[i] = new ObjectReferenceKeyframe();
             spriteKeyFrames[i].time = ((float)i / animClip.frameRate);
             spriteKeyFrames[i].value = Sprites[i];
+        }
+
+        if (isLoop)
+        {
+            //animClip.wrapMode = WrapMode.Loop;
+            var settings = AnimationUtility.GetAnimationClipSettings(animClip);
+            settings.loopTime = true;
+            AnimationUtility.SetAnimationClipSettings(animClip, settings);
         }
 
         AnimationUtility.SetObjectReferenceCurve(animClip, spriteBinding, spriteKeyFrames);

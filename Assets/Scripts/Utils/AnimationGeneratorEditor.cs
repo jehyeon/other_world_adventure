@@ -13,27 +13,36 @@ public class AnimationGeneratorEditor : EditorWindow
         public int gap;
         public int count;
         public List<string> names;
+        public List<bool> loops;
 
-        public AnimationInfo(int _gap, int _count, string[] _names)
+        public AnimationInfo(int _gap, int _count, string[] _names, bool[] _loops)
         {
             gap = _gap;
             count = _count;
             names = new List<string>();
+            loops = new List<bool>();
+
             for (int i = 0; i < count; i++)
             {
                 names.Add(_names[i]);
+            }
+
+            for (int i = 0; i < count; i++)
+            {
+                loops.Add(_loops[i]);
             }
         }
     };
 
     public GameObject obj = null;
-    private string baseLoadPath = "";
+    private string baseLoadPath = "Assets/Art/Sprites/sanctumpixel";
     private string parentPathForLoad = "";
-    private string baseSavePath = "";
+    private string baseSavePath = "Assets/Resources/Animations";
     private string parentPathForSave = "";
     private int gap;
     private int count;
     private string[] names = new string[20];
+    private bool[] loops = new bool[20];
 
     // Animation Info
     private AnimationInfo info;
@@ -64,11 +73,12 @@ public class AnimationGeneratorEditor : EditorWindow
         for (int i = 0; i < count; i++)
         {
             names[i] = EditorGUILayout.TextField("Animation name", names[i]);
+            loops[i] = EditorGUILayout.Toggle("loop", loops[i]);
         }
 
         if (GUILayout.Button("Save"))
         {
-            info = new AnimationInfo(gap, count, names);
+            info = new AnimationInfo(gap, count, names, loops);
         }
 
         EditorGUILayout.LabelField("Load & Save Path");
@@ -104,19 +114,22 @@ public class AnimationGeneratorEditor : EditorWindow
         AnimationGenerator generator = FindObjectOfType<AnimationGenerator>();
 
         UnityEngine.Object[] objs = AssetDatabase.LoadAllAssetsAtPath(before);
+        // 순서대로 sprite가 안 오는 경우가 있어서 정렬
+        Array.Sort(objs, (a, b) => ConvertForSort(a.name) < ConvertForSort(b.name) ? -1 : 1);
 
         int count = 0;
         int animationIndex = 0;
         Debug.Log(string.Format("Sprite path: {0}", before));
-        for (int i = 1; i < info.count * info.gap + 1; i++)
+        for (int i = 0; i < info.count * info.gap; i++)
         {
             count++;
             generator.AddSprite(objs[i]);
-            Debug.Log(objs[i]);
+            Debug.Log(objs[i].name);
+
+            //Debug.Log(objs[0].);
             if (count == info.gap)
             {
-                AnimationClip animClip = generator.Generate();
-
+                AnimationClip animClip = generator.Generate(info.loops[animationIndex]);
                 // 상위 폴더가 없는 경우
                 if (!Directory.Exists(after))
                 {
@@ -126,7 +139,7 @@ public class AnimationGeneratorEditor : EditorWindow
                 AssetDatabase.CreateAsset(
                     animClip, after + "/" + info.names[animationIndex] + ".anim");
                 AssetDatabase.SaveAssets();
-                Debug.Log(string.Format("Animation save path: {0}", 
+                Debug.Log(string.Format("Animation save path: {0}",
                     after + "/" + info.names[animationIndex]));
 
                 generator.ClearSprites();
@@ -137,5 +150,18 @@ public class AnimationGeneratorEditor : EditorWindow
         
         AssetDatabase.Refresh();
 
+    }
+
+    private int ConvertForSort(string name)
+    {
+        string[] splited = name.Split("_");
+
+        if (splited.Length > 1)
+        {
+            return int.Parse(splited[1]);
+        }
+
+        // sheet data인 경우 (ex. not 1_16, just 1, 2)
+        return 10000;
     }
 }
